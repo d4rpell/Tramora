@@ -1,0 +1,25 @@
+# Privado (D-002, D-004): fuera de git; .internal/ incluye prototipos, referencias y espejo en español
+/AGENTS.md
+/CLAUDE.md
+/TODO.md
+/CODEBASE_SUMMARY.md
+/CONTEXT_CHANGELOG.md
+/CHANGELOG_CONTEXT.md
+/.internal/
+
+# Dependencias y capturas de QA
+node_modules/
+_qa-*.png
+
+# Entorno y credenciales
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Editor / SO
+/.idea/
+/.vscode/
+.DS_Store
+Thumbs.db
