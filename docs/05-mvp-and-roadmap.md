@@ -14,7 +14,7 @@ Status: proposal to guide the work. The concept prototype is a visual simulation
 
 ## Prior technical test — Plugin with real activity
 
-Priority accepted in [D-001](10-plugin-direction-and-technical-test.md): verify an integrated panel, authorized access to events and a complete walkthrough up to saving and recovering an explanation in the map. Use Burneum once a task is identified. This test brings forward the minimum check of live activity; Phase 2 will extend navigation and robustness. It is not considered implemented by the demos.
+Priority accepted in [D-001](10-plugin-direction-and-technical-test.md): verify an integrated panel, authorized access to events and a complete walkthrough up to saving and recovering an explanation in the map. Use an authorized controlled task, with genuinely executed agent activity and test data, without requiring another project ([D-005](08-decisions-and-questions.md#d-005--validation-independent-of-burneum-2026-10-10)). The technical test is separate from the later value pilot. This test brings forward the minimum check of live activity; Phase 2 will extend navigation and robustness. It is not considered implemented by the demos.
 
 ## Phase 1 — MVP with one real source
 
@@ -48,3 +48,9 @@ A new autonomous swarm, an agent marketplace, avatar gamification, invented tran
 - **Trust:** a fluent explanation can hide a lack of data. Measure whether people correctly identify facts, inferences and gaps.
 - **Unmanageable map:** automatic nodes without editing end up as yet another list that is hard to consult. Measure recovery after several days.
 - **Interruption:** the panel must not force constant switching between Codex/IDE and Tramora. Test real duration and frequency of use.
+
+## Commercial preparation before launch
+
+The usable initial version and value pilot precede commercial completion. Before public opening, implement and privately validate the applicable full user journey: access and permissions, test-mode purchase and verified payment events, entitlement, delivery/installation, operational email, learning recovery and support/cancellation/data deletion. Choose offer, licence and distribution based on verified host restrictions; no checkout workaround is presumed compatible.
+
+Prepare production configuration, credentials, private deployment, rollback/restoration, minimal monitoring, privacy/retention and customer texts, plus the owner's administrative requirements. Record evidence and remaining activation steps. Commercial readiness is not declared while implementation, credentials, approvals or required validation are missing. Keep public DNS from pointing to the service and real charges disabled until the owner confirms applicable administrative preparations and expressly authorizes launch. Agent intervention, teams and additional connectors remain separate extensions requiring explicit decisions, not first-launch requirements.

@@ -17,7 +17,7 @@ Research carried out during ideation up to 2026-09-29. It describes capabilities
 
 ## Differentiation hypothesis to validate
 
-Tramora joins six moments in one experience: **observed fact → contextual question → explanation with source and adjustable depth → possible human decision → observed outcome → recoverable memory**. Its focus is the developer who wants to understand and remember what the agents did while building, not merely to monitor an execution or draw a workflow. This combination must be tested with users and with Burneum; it is not claimed that nobody offers it.
+Tramora joins six moments in one experience: **observed fact → contextual question → explanation with source and adjustable depth → possible human decision → observed outcome → recoverable memory**. Its focus is the developer who wants to understand and remember what the agents did while building, not merely to monitor an execution or draw a workflow. This combination must be tested with users through a separately chosen value pilot; it is not claimed that nobody offers it.
 
 ## Design inspiration to review later
 

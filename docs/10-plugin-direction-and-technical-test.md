@@ -12,7 +12,7 @@ The target experience combines a compact panel with animated avatars and latest 
 
 The previous proposal was to start with a local web application and a read-only importer, leaving the plugin for later. It is kept here as an alternative that was considered and superseded in priority, not as a demonstrated technical failure. Another alternative was to depend entirely on a provider-exclusive interface; it is discarded for now in order to keep the map and reuse the interface across compatible surfaces.
 
-The accepted option reduces the need to switch conversations to understand the work. It makes it possible to validate Tramora's central hypothesis with Burneum early and to keep presentation, activity capture and memory separate. No SDK, model provider, database, deployment or exact initial ChatGPT/Codex surface has been chosen yet.
+The accepted option reduces the need to switch conversations to understand the work. It makes it possible to validate Tramora's central hypothesis early with an authorized task and to keep presentation, activity capture and memory separate. No SDK, model provider, database, deployment or exact initial ChatGPT/Codex surface has been chosen yet.
 
 ## Available evidence and limits
 
@@ -27,9 +27,11 @@ Installing the plugin does not grant automatic access to all conversations, mess
 
 Durable storage of the map must be independent of the lifetime of the visual component. Its local or remote location, permissions and retention policy remain open. This acceptance is not equivalent to an implemented integration, publication in a directory, activation of hooks or authorization to upload private data.
 
-## First technical test with Burneum
+## First technical test with a controlled task
 
-1. Identify Burneum's specific repository, task and environment with the owner; they are not yet recorded in these documents.
+Amendment on 2026-10-10: [D-005](08-decisions-and-questions.md#d-005--validation-independent-of-burneum-2026-10-10) withdraws the originally proposed Burneum case. The plugin-first decision and success criteria remain in force. The light scope and concrete host/source still require selection; backlog restructuring is not implementation approval.
+
+1. Prepare a small controlled task in a test workspace; identify the chosen host, version, source and expected action/result. Obtain explicit authorization for the session, capture, inclusion/redaction, remote processing if any, and retention before collecting data. No external active project is required.
 2. Show the component inside a compatible surface and check its behavior while work continues and when closing/reopening.
 3. Capture a real action and its result; if the source exposes a delegation between agents, also show that exchange with provenance. Record the events that are not available.
 4. Complete the flow: real activity → avatar and log → contextual question → explanation with source → node saved and marked for review → recovery after reopening.
@@ -39,4 +41,4 @@ The technical test passes if it demonstrates the full flow in an identified envi
 
 ## Review conditions
 
-Reopen the priority if the host does not allow a useful visual presence, does not expose enough authorized activity or imposes restrictions that prevent saving/recovering the map. In that case, consider the web with a local connector, preserving the components and the record of what was verified. Also review based on real usage: distraction, quality of explanations and usefulness of the map when resuming Burneum.
+Reopen the priority if the host does not allow a useful visual presence, does not expose enough authorized activity or imposes restrictions that prevent saving/recovering the map. In that case, consider the web with a local connector, preserving the components and the record of what was verified. Also review based on real usage: distraction, quality of explanations and usefulness of the map when resuming the selected task or project.
