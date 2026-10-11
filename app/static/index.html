@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tramora light — room, log, map</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <strong>Tramora</strong> <span class="badge">fixture demo</span>
+    </div>
+    <div class="coverage" id="coverage" role="status">coverage: unknown</div>
+    <button type="button" id="capture-toggle" aria-pressed="false">capture: on</button>
+    <button type="button" id="theme-toggle" aria-pressed="false">theme: light</button>
+  </header>
+
+  <nav class="tabs" role="navigation" aria-label="sections">
+    <button type="button" class="tab active" data-tab="room" id="tab-room">Room</button>
+    <button type="button" class="tab" data-tab="log" id="tab-log">Log</button>
+    <button type="button" class="tab" data-tab="map" id="tab-map">Map</button>
+  </nav>
+
+  <main id="tab-room-view" class="view room-view">
+    <section class="card" aria-labelledby="room-title">
+      <h2 id="room-title">Room</h2>
+      <p class="hint">This is a fictitious fixture demo. Only observed events are shown.</p>
+      <div id="room" class="room" aria-live="polite"></div>
+    </section>
+    <section class="card" aria-labelledby="question-title">
+      <h2 id="question-title">Ask about an event</h2>
+      <form id="question-form">
+        <label for="question-text">Question</label>
+        <input id="question-text" name="question" type="text" autocomplete="off" placeholder="Ask about the selected event" />
+        <div class="suggestions" id="suggestions"></div>
+        <fieldset>
+          <legend>Depth</legend>
+          <label><input type="radio" name="depth" value="brief" checked /> brief</label>
+          <label><input type="radio" name="depth" value="with_example" /> with example</label>
+          <label><input type="radio" name="depth" value="detailed" /> detailed</label>
+        </fieldset>
+        <p class="notice" id="share-notice">No remote sending by default; nothing is shared.</p>
+        <button type="submit">Ask</button>
+      </form>
+      <div id="explanation" class="explanation" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <section id="tab-log-view" class="view log-view" hidden>
+    <h2>Log</h2>
+    <p class="hint">Each entry maps to an observed event with provenance. Gaps are declared.</p>
+    <ul id="log" class="log"></ul>
+  </section>
+
+  <section id="tab-map-view" class="view map-view" hidden>
+    <h2>Map</h2>
+    <p class="hint">Saved nodes and review marks. Version history is kept; nothing is silently rewritten.</p>
+    <div id="map" class="map" aria-live="polite"></div>
+    <div class="map-actions">
+      <button type="button" id="map-save">save selected explanation as node</button>
+      <button type="button" id="map-list-marked">show marked</button>
+      <button type="button" id="map-export">export (observed/generated)</button>
+    </div>
+    <p class="notice" id="map-save-notice" role="status"></p>
+    <pre id="export-out" class="export" hidden></pre>
+  </section>
+
+  <dialog id="evidence-dialog">
+    <form method="dialog">
+      <h3>Evidence</h3>
+      <div id="evidence-body"></div>
+      <button type="submit">Close</button>
+    </form>
+  </dialog>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

@@ -11,6 +11,11 @@
 node_modules/
 _qa-*.png
 
+# Runtime local data of the Tramora app (T1-01)
+*.db
+*.db-shm
+*.db-wal
+
 # Entorno y credenciales
 .env
 .env.*

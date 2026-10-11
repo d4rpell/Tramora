@@ -1,0 +1,15 @@
+{
+  "name": "tramora-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Tramora light walkthrough (T1-01). Local, read-only, fixture-driven. Demo data declared fictitious.",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test",
+    "lint": "node scripts/lint.js",
+    "start": "node src/web-server.js"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}
