@@ -23,7 +23,7 @@ test('store: persistence survives close/reopen (independent of panel lifetime)',
   const file = tempDb();
   const app1 = createApp({ file, permission: true, captureEnabled: true });
   wireHooks(app1);
-  assert.equal(app1.listEvents(SESSION_ID).length, 6);
+  assert.equal(app1.listEvents(SESSION_ID).length, 8);
 
   // Save a node and a mark, then close (new app on the same file).
   const ev = app1.listEvents(SESSION_ID).find((e) => e.kind === 'result');

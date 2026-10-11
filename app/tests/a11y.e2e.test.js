@@ -93,7 +93,7 @@ test('a11y: 320px no horizontal overflow; keyboard operable; reduced-motion resp
     await withPage(t, { width: 1280, height: 800 }, null, async (page) => {
       await page.waitForSelector('.event');
       const count = await page.locator('.event').count();
-      assert.ok(count >= 6, `expected fixture events, got ${count}`);
+      assert.ok(count >= 8, `expected fixture events, got ${count}`);
       const log = await page.locator('#tab-log-view').count();
       assert.equal(log, 1, 'log view exists in the DOM');
     });
@@ -146,6 +146,73 @@ test('a11y: 320px no horizontal overflow; keyboard operable; reduced-motion resp
       await page.waitForSelector('.node');
       await page.click('.node button:has-text("mark")');
       await page.waitForSelector('.node .marked', { timeout: 10000 });
+    });
+  });
+
+  await t.test('return view: renders sections and is pure consultation (RC-01/05/12)', async () => {
+    await withPage(t, { width: 1000, height: 800 }, null, async (page) => {
+      await page.click('#tab-return');
+      await page.waitForSelector('#return-overview .return-row');
+      await page.waitForSelector('#return-recent .return-row');
+      const pendingRows = await page.locator('#return-pending .return-row').count();
+      const markedRows = await page.locator('#return-marked .return-row').count();
+      const propRows = await page.locator('#return-proposals .return-row').count();
+      assert.ok(pendingRows >= 0, 'pending section renders (may be empty)');
+      assert.ok(markedRows >= 0, 'marked section renders (may be empty)');
+      assert.ok(propRows >= 0, 'proposals section renders (may be empty)');
+      // no-mutation: persisted content (all collections) identical before and
+      // after opening the view; `exported_at` is an export timestamp, not store state
+      const stripExportedAt = (raw) => { const d = JSON.parse(raw); delete d.exported_at; return JSON.stringify(d); };
+      const before = stripExportedAt(await getJson(`http://127.0.0.1:${PORT}/api/export`));
+      await page.click('#tab-room');
+      await page.click('#tab-return');
+      const after = stripExportedAt(await getJson(`http://127.0.0.1:${PORT}/api/export`));
+      assert.equal(after, before, 'opening the return view must not change any persisted data');
+    });
+  });
+
+  await t.test('return view: pending with items renders all rows and later sections (P1 regression)', async () => {
+    await withPage(t, { width: 1000, height: 800 }, null, async (page) => {
+      // The demo fixture declares two pending actions (no observed result);
+      // the P1 regression was: renderPendingRows returned a single element
+      // instead of an array, breaking pending + later sections.
+      await page.click('#tab-return');
+      await page.waitForSelector('#return-pending .return-row');
+      const pendingRows = await page.locator('#return-pending .return-row').count();
+      // 2 pending action rows + 1 session-without-closure row (the fixture Stop
+      // closes a turn, not the session)
+      assert.equal(pendingRows, 3, 'pending section renders the 2 actions + the open session');
+      // later sections still render (no thrown TypeError broke the render)
+      await page.waitForSelector('#return-marked .return-rows');
+      await page.waitForSelector('#return-proposals .return-rows');
+      const headers = await page.locator('#tab-return-view h3').count();
+      assert.equal(headers, 5, 'section headings are preserved (aria-labelledby intact)');
+    });
+  });
+
+  await t.test('return view: 320px no overflow; keyboard opens evidence; reduced-motion (RC-10/11)', async () => {
+    await withPage(t, { width: 320, height: 700 }, null, async (page) => {
+      await page.click('#tab-return');
+      await page.waitForSelector('#return-recent .return-row');
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
+      assert.equal(overflow, false, 'no horizontal overflow at 320px on the return view');
+    });
+    await withPage(t, { width: 900, height: 800 }, null, async (page) => {
+      await page.click('#tab-return');
+      await page.waitForSelector('#return-recent .return-row button');
+      const firstBtn = page.locator('#return-recent .return-row button').first();
+      await firstBtn.focus();
+      await page.keyboard.press('Enter');
+      await page.waitForSelector('#evidence-dialog[open]');
+    });
+    await withPage(t, { width: 900, height: 800 }, 'reduce', async (page) => {
+      await page.click('#tab-return');
+      await page.waitForSelector('#return-recent .return-row');
+      const animated = await page.evaluate(() => {
+        const el = document.querySelector('#return-recent .return-row');
+        return el && getComputedStyle(el).animationName && getComputedStyle(el).animationName !== 'none';
+      });
+      assert.equal(animated, false, 'no animation under prefers-reduced-motion on the return view');
     });
   });
 

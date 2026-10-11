@@ -109,6 +109,30 @@ function wireHooks(app) {
     payload: { note: 'fixture session ends (fictitious)' },
     status: 'captured',
   });
+  app.ingest({
+    id: 'ev:7',
+    session_id: SESSION_ID,
+    kind: 'action',
+    source_event: 'PreToolUse',
+    actor: 'coder',
+    observed_at: '2026-10-11T08:06:00.000Z',
+    tool_use_id: 'tu:pend1',
+    turn_id: 'turn:3',
+    payload: { tool: 'Bash', input: 'pending check (no observed result)' },
+    status: 'captured',
+  });
+  app.ingest({
+    id: 'ev:8',
+    session_id: SESSION_ID,
+    kind: 'action',
+    source_event: 'PreToolUse',
+    actor: 'coder',
+    observed_at: '2026-10-11T08:07:00.000Z',
+    tool_use_id: 'tu:pend2',
+    turn_id: 'turn:4',
+    payload: { tool: 'Bash', input: 'another pending check (no observed result)' },
+    status: 'captured',
+  });
   return { sessionId: SESSION_ID, taskId: TASK_ID };
 }
 

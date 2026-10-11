@@ -225,6 +225,160 @@ function openEvidence(event) {
   dialog.showModal();
 }
 
+function renderReturnSection(containerId, rows) {
+  const container = document.getElementById(containerId);
+  const list = container.querySelector('.return-rows');
+  list.textContent = '';
+  if (!rows.length) {
+    list.append(el('p', 'return-empty', 'No items.'));
+    return;
+  }
+  for (const row of rows) list.append(row);
+}
+
+function renderReturn(data) {
+  renderReturnSection('return-overview', renderOverviewRows(data.overview));
+  renderReturnSection('return-recent', renderRecentRows(data.recent));
+  renderReturnSection('return-pending', renderPendingRows(data.pending));
+  renderReturnSection('return-marked', renderMarkedRows(data.marked));
+  renderReturnSection('return-proposals', renderProposalRows(data.reviewProposals));
+}
+
+function renderOverviewRows(overview) {
+  const rows = [];
+  for (const task of overview.tasks || []) {
+    const row = el('div', 'return-row');
+    row.append(el('span', 'label', `task: ${task.title || task.id}`));
+    row.append(el('span', 'tag', `status: ${task.status}`));
+    row.append(el('span', 'tag', `project: ${task.project_ref || '—'}`));
+    rows.push(row);
+  }
+  for (const session of overview.sessions || []) {
+    const row = el('div', 'return-row');
+    row.append(el('span', 'label', `session: ${session.id}`));
+    row.append(el('span', 'tag', `source: ${session.source}`));
+    const state = session.session_closure === 'closed'
+      ? 'closed'
+      : (session.last_turn_finished ? 'no session closure observed · last turn finished' : 'no session closure observed');
+    row.append(el('span', 'state', state));
+    rows.push(row);
+  }
+  return rows;
+}
+
+function renderRecentRows(events) {
+  return (events || []).map((event) => {
+    const row = el('div', 'return-row');
+    row.append(el('span', 'tag', `${event.observed_at || '—'}  ${event.actor || 'unknown'}  ${event.kind}  ${event.source_event}`));
+    if (event.identity_confidence === 'uncertain') row.append(el('span', 'limit', 'identity uncertain'));
+    const btn = el('button', null, 'evidence');
+    btn.type = 'button';
+    btn.addEventListener('click', () => openEvidence(event));
+    row.append(btn);
+    return row;
+  });
+}
+
+function renderPendingRows(pending) {
+  const rows = [];
+  for (const p of pending.pendingResults || []) {
+    const row = el('div', 'return-row');
+    row.append(el('span', 'label', `${p.action.actor || 'unknown'} · ${p.action.source_event}`));
+    row.append(el('span', 'state', p.label));
+    if (p.closureSignal) row.append(el('span', 'tag', `closing signal: ${p.closureSignal.source_event || p.closureSignal.kind}`));
+    const btn = el('button', null, 'event');
+    btn.type = 'button';
+    const event = state.events.find((e) => e.id === p.action.id);
+    if (event) btn.addEventListener('click', () => openEvidence(event));
+    else btn.disabled = true;
+    row.append(btn);
+    rows.push(row);
+  }
+  for (const s of pending.sessions || []) {
+    const row = el('div', 'return-row');
+    row.append(el('span', 'label', `session: ${s.id}`));
+    row.append(el('span', 'state', s.last_turn_finished ? 'no session closure observed · last turn finished' : 'no session closure observed'));
+    rows.push(row);
+  }
+  for (const g of pending.gaps || []) {
+    const row = el('div', 'return-row');
+    row.append(el('span', 'label', `coverage gap: ${g.id}`));
+    row.append(el('span', 'limit', 'coverage unknown'));
+    rows.push(row);
+  }
+  return rows;
+}
+
+function renderMarkedRows(marked) {
+  return (marked || []).map((m) => {
+    const row = el('div', 'return-row');
+    row.append(el('span', 'label', `marked: ${m.node_ref}`));
+    row.append(el('span', 'tag', `at ${m.marked_at || '—'} by ${m.marked_by || '—'}`));
+    if (m.context_ref) row.append(el('span', 'tag', `context: ${m.context_ref}`));
+    const btn = el('button', null, 'node');
+    btn.type = 'button';
+    btn.addEventListener('click', async () => {
+      const { nodes } = await api('/api/nodes');
+      const node = nodes.find((n) => n.id === m.node_ref);
+      if (!node) return;
+      openNodeEvidence(node);
+    });
+    row.append(btn);
+    return row;
+  });
+}
+
+function openNodeEvidence(node) {
+  const dialog = document.getElementById('evidence-dialog');
+  const body = document.getElementById('evidence-body');
+  body.textContent = '';
+  body.append(el('h4', null, `Node ${node.id}`));
+  body.append(el('p', null, `kind: ${node.kind} · v${node.content_version} · schema v${node.schema_version} · ${node.project_revision || 'no revision'}`));
+  body.append(el('p', null, node.title));
+  if (node.body) body.append(el('p', null, node.body));
+  if (node.previous_version_id) {
+    const prevBtn = el('button', null, 'show previous version');
+    prevBtn.type = 'button';
+    prevBtn.addEventListener('click', async () => {
+      const previous = await api(`/api/node-version?id=${encodeURIComponent(node.previous_version_id)}`);
+      body.append(el('p', 'event-gap', `previous version (${previous.project_revision || 'no revision'}): ${previous.title}`));
+      if (previous.body) body.append(el('p', null, previous.body));
+      if (previous.sources && previous.sources.length) body.append(el('p', 'event-gap', `sources: ${previous.sources.join(', ')}`));
+    });
+    body.append(prevBtn);
+  }
+  dialog.showModal();
+}
+
+function renderProposalRows(proposals) {
+  return (proposals || []).map((p) => {
+    const row = el('div', 'return-row');
+    row.append(el('span', 'label', `review this node: ${p.title || p.node_id}`));
+    row.append(el('span', 'tag', `revision ${p.previous.project_revision || '—'} → ${p.project_revision || '—'}`));
+    const btn = el('button', null, 'previous version');
+    btn.type = 'button';
+    btn.addEventListener('click', async () => {
+      const previous = await api(`/api/node-version?id=${encodeURIComponent(p.previous.version_id)}`);
+      const dialog = document.getElementById('evidence-dialog');
+      const body = document.getElementById('evidence-body');
+      body.textContent = '';
+      body.append(el('h4', null, `Previous version of ${p.node_id}`));
+      body.append(el('p', null, `revision: ${previous.project_revision || '—'}`));
+      body.append(el('p', null, previous.title));
+      if (previous.body) body.append(el('p', null, previous.body));
+      if (previous.sources && previous.sources.length) body.append(el('p', 'event-gap', `sources: ${previous.sources.join(', ')}`));
+      dialog.showModal();
+    });
+    row.append(btn);
+    return row;
+  });
+}
+
+async function refreshReturn() {
+  const data = await api('/api/return-overview');
+  renderReturn(data);
+}
+
 function bindTabs() {
   const tabButtons = document.querySelectorAll('.tab');
   tabButtons.forEach((btn) => {
@@ -324,6 +478,7 @@ async function init() {
   await refreshState();
   renderLog();
   refreshMap();
+  refreshReturn();
 }
 
 init();

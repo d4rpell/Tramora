@@ -161,6 +161,29 @@ fieldset { border: 1px solid var(--line); border-radius: 8px; margin: 8px 0; }
 .map-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
 .export { max-height: 280px; overflow: auto; font-size: 11px; border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
 
+/* Return view (T1-03): read-only consultation, honest labels */
+.return-view .return-section { margin: 12px 0; }
+.return-view h3 { margin: 0 0 6px; font-size: 14px; }
+.return-rows { display: grid; gap: 6px; }
+.return-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  align-items: baseline;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 6px 0;
+  font-size: 13px;
+  background: var(--card);
+}
+.return-row .tag { color: var(--muted); font-size: 12px; }
+.return-row .label { font-weight: 600; }
+.return-row .state { color: var(--accent); font-size: 12px; }
+.return-row .limit { color: var(--danger); font-size: 12px; }
+.return-row button { font-size: 12px; padding: 2px 8px; border-radius: 999px; }
+.return-empty { color: var(--muted); font-size: 13px; }
+
 /* Accessibility: animations only when the user does not request reduced motion */
 @media (prefers-reduced-motion: no-preference) {
   .event.animate-in { animation: fadein 300ms ease; }

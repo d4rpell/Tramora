@@ -109,6 +109,10 @@ function createApp({ file, secrets = [], permission = false, captureEnabled = tr
     return ops.listNodes(db);
   }
 
+  function getReturnOverview(sessionRef) {
+    return ops.getReturnOverview(db, sessionRef);
+  }
+
   function mark({ nodeId, on, contextRef, markedBy }) {
     return ops.setMark(db, { nodeId, on, contextRef, markedBy });
   }
@@ -150,6 +154,7 @@ function createApp({ file, secrets = [], permission = false, captureEnabled = tr
     getNode,
     getNodeVersion,
     listNodes,
+    getReturnOverview,
     mark,
     listMarked,
     unmark,

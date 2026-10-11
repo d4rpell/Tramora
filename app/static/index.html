@@ -20,6 +20,7 @@
     <button type="button" class="tab active" data-tab="room" id="tab-room">Room</button>
     <button type="button" class="tab" data-tab="log" id="tab-log">Log</button>
     <button type="button" class="tab" data-tab="map" id="tab-map">Map</button>
+    <button type="button" class="tab" data-tab="return" id="tab-return">Return</button>
   </nav>
 
   <main id="tab-room-view" class="view room-view">
@@ -64,6 +65,31 @@
     </div>
     <p class="notice" id="map-save-notice" role="status"></p>
     <pre id="export-out" class="export" hidden></pre>
+  </section>
+
+  <section id="tab-return-view" class="view return-view" hidden>
+    <h2>Return</h2>
+    <p class="hint">Consultation only: nothing here starts capture or work, and no version or mark is changed. Every signal has evidence or a declared limit.</p>
+    <div id="return-overview" class="return-section" aria-labelledby="return-overview-title">
+      <h3 id="return-overview-title">Task / session</h3>
+      <div class="return-rows" aria-live="polite"></div>
+    </div>
+    <div id="return-recent" class="return-section" aria-labelledby="return-recent-title">
+      <h3 id="return-recent-title">Recent activity (last 20 observed events)</h3>
+      <div class="return-rows" aria-live="polite"></div>
+    </div>
+    <div id="return-pending" class="return-section" aria-labelledby="return-pending-title">
+      <h3 id="return-pending-title">Pending</h3>
+      <div class="return-rows" aria-live="polite"></div>
+    </div>
+    <div id="return-marked" class="return-section" aria-labelledby="return-marked-title">
+      <h3 id="return-marked-title">Marked for review</h3>
+      <div class="return-rows" aria-live="polite"></div>
+    </div>
+    <div id="return-proposals" class="return-section" aria-labelledby="return-proposals-title">
+      <h3 id="return-proposals-title">Review proposals (no silent rewrite)</h3>
+      <div class="return-rows" aria-live="polite"></div>
+    </div>
   </section>
 
   <dialog id="evidence-dialog">

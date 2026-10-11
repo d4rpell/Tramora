@@ -80,6 +80,16 @@ function apiRoutes(req, res) {
     return send(200, { nodes: app.listNodes() });
   }
 
+  if (req.method === 'GET' && path === '/api/return-overview') {
+    return send(200, app.getReturnOverview(sessionId));
+  }
+
+  if (req.method === 'GET' && path === '/api/node-version') {
+    const versionId = url.searchParams.get('id');
+    const version = versionId ? app.getNodeVersion(versionId) : null;
+    return send(200, version || { error: 'version not found' });
+  }
+
   if (req.method === 'POST' && path === '/api/node') {
     return readJson(req, (err, input) => {
       if (err) return send(err.status || 400, { error: err.message });

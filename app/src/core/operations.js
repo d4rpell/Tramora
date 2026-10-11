@@ -478,6 +478,116 @@ function removeMark(db, nodeId) {
   return listMarked(db);
 }
 
+const RECENT_LIMIT = 20;
+
+function sessionClosureInfo(db, session) {
+  // Session closure is only accredited by `ended_at` or a SessionEnd event
+  // (T1-03 §3.1). `Stop` closes a turn, not the session.
+  if (session.ended_at) return { session_closure: 'closed', last_turn_finished: false };
+  const events = db.prepare('SELECT source_event FROM events WHERE session_id = ? ORDER BY received_at ASC, rowid ASC').all(session.id);
+  if (events.some((e) => e.source_event === 'SessionEnd')) return { session_closure: 'closed', last_turn_finished: false };
+  const last = events[events.length - 1];
+  return { session_closure: 'no session closure', last_turn_finished: !!(last && last.source_event === 'Stop') };
+}
+
+function getTaskOverview(db) {
+  const tasks = db.prepare('SELECT * FROM tasks ORDER BY rowid ASC').all();
+  const sessions = db.prepare('SELECT * FROM sessions ORDER BY rowid ASC').all()
+    .map((s) => ({ ...s, ...sessionClosureInfo(db, s) }));
+  return { tasks, sessions };
+}
+
+function listPending(db, sessionRef) {
+  const session = db.prepare('SELECT * FROM sessions WHERE id = ?').get(sessionRef);
+  if (!session) throw new Error(`session not found: ${sessionRef}`);
+  const events = listEvents(db, sessionRef);
+  const resultByToolUse = new Map(
+    events.filter((e) => e.kind === 'result' && e.tool_use_id).map((e) => [e.tool_use_id, e]),
+  );
+  const pendingResults = [];
+  for (const action of events) {
+    if (action.kind !== 'action' || !action.tool_use_id) continue;
+    if (resultByToolUse.has(action.tool_use_id)) continue;
+    // Positional label (T1-03 §3.3): nearest closure signal AFTER the action.
+    // Times are normalized to epoch millis so mixed ISO formats compare
+    // chronologically; an unparsable timestamp is ignored (no invented time).
+    const idx = events.indexOf(action);
+    const toEpoch = (value) => {
+      if (value == null) return null;
+      const ms = Date.parse(value);
+      return Number.isNaN(ms) ? null : ms;
+    };
+    const actionTime = toEpoch(action.observed_at || action.received_at);
+    const laterEvents = events.slice(idx + 1);
+    let label = 'result not yet observed';
+    let closureSignal = null;
+    let nearest = null;
+    const consider = (time, signal) => {
+      if (time == null) return;
+      if (nearest != null && time >= nearest) return; // keep the closest signal
+      nearest = time;
+      label = signal.kind === 'session' ? 'result not observed at session close' : 'result not observed at turn close';
+      closureSignal = signal;
+    };
+    for (const after of laterEvents) {
+      const t = toEpoch(after.observed_at || after.received_at);
+      if (after.source_event === 'SessionEnd') consider(t, { kind: 'session', event_id: after.id, source_event: after.source_event });
+      if (after.source_event === 'Stop') consider(t, { kind: 'turn', event_id: after.id, source_event: after.source_event });
+    }
+    if (session.ended_at) {
+      const endTime = toEpoch(session.ended_at);
+      const endSignal = { kind: 'session', event_id: null, source_event: 'ended_at' };
+      // `ended_at` is a session signal; only apply it if it is at/after the
+      // action (it could be before a Stop that follows the action).
+      if (actionTime != null && endTime != null && endTime > actionTime) consider(endTime, endSignal);
+    }
+    pendingResults.push({
+      action: { id: action.id, source_event: action.source_event, actor: action.actor, observed_at: action.observed_at, tool_use_id: action.tool_use_id },
+      label,
+      closureSignal,
+    });
+  }
+  const openSessions = db.prepare('SELECT * FROM sessions WHERE task_ref = ? ORDER BY rowid ASC').all(session.task_ref)
+    .filter((s) => sessionClosureInfo(db, s).session_closure !== 'closed')
+    .map((s) => ({ id: s.id, source: s.source, started_at: s.started_at, ended_at: s.ended_at, ...sessionClosureInfo(db, s) }));
+  const gaps = events.filter((e) => e.status === 'unknown_coverage')
+    .map((e) => ({ id: e.id, source_event: e.source_event }));
+  return { pendingResults, sessions: openSessions, gaps };
+}
+
+function listReviewProposals(db) {
+  const proposals = [];
+  for (const row of db.prepare('SELECT * FROM nodes ORDER BY rowid ASC').all()) {
+    if (!row.previous_version_id) continue;
+    const prev = db.prepare('SELECT * FROM node_versions WHERE id = ?').get(row.previous_version_id);
+    if (!prev) continue;
+    if ((prev.project_revision ?? null) === (row.project_revision ?? null)) continue;
+    proposals.push({
+      node_id: row.id,
+      kind: row.kind,
+      title: row.title,
+      project_revision: row.project_revision,
+      previous: {
+        project_revision: prev.project_revision,
+        version_id: prev.id,
+        content_version: prev.content_version,
+        updated_at: prev.updated_at,
+      },
+    });
+  }
+  return proposals;
+}
+
+function getReturnOverview(db, sessionRef) {
+  return {
+    overview: getTaskOverview(db),
+    recent: listEvents(db, sessionRef).slice(-RECENT_LIMIT),
+    pending: listPending(db, sessionRef),
+    marked: listMarked(db),
+    reviewProposals: listReviewProposals(db),
+  };
+}
+
 function exportAll(db) {
   const data = {
     schema_version: SCHEMA_VERSION,
@@ -519,6 +629,10 @@ module.exports = {
   setMark,
   listMarked,
   removeMark,
+  getTaskOverview,
+  listPending,
+  listReviewProposals,
+  getReturnOverview,
   exportAll,
   deleteAll,
 };

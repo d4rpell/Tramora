@@ -104,7 +104,7 @@ test('ask: cancel (no submit) never sends; nothing is persisted until a question
   const before = app.listNodes();
   assert.equal(before.length, 0, 'no nodes exist before any save');
   // No ask() call was made here: nothing persisted, nothing sent.
-  assert.equal(app.listEvents(SESSION_ID).length, 6);
+  assert.equal(app.listEvents(SESSION_ID).length, 8);
 });
 
 test('explain: provider failure/timeout is surfaced, not faked as success', () => {
@@ -417,7 +417,7 @@ test('mark/list_marked: persistent; unmark persists; marking starts no work', ()
   app.unmark(node.id);
   assert.equal(app.listMarked().length, 0);
   // marking does not start capture or create events
-  assert.equal(app.listEvents(SESSION_ID).length, 6);
+  assert.equal(app.listEvents(SESSION_ID).length, 8);
 });
 
 test('export: separates observed/generated and keeps provenance; delete clears per retention', () => {
@@ -444,4 +444,137 @@ test('export: separates observed/generated and keeps provenance; delete clears p
   assert.equal(app.listEvents(SESSION_ID).length, 0);
   assert.equal(app.listNodes().length, 0);
   assert.equal(app.listMarked().length, 0);
+});
+
+test('return overview: is read-only and never labels a session "in execution" or "loss"', async () => {
+  const app = freshApp();
+  const beforeEvents = app.listEvents(SESSION_ID).length;
+  const beforeNodes = app.listNodes().length;
+  const beforeMarks = app.listMarked().length;
+  const overview = app.getReturnOverview(SESSION_ID);
+  assert.ok(overview.overview.tasks.length > 0, 'tasks present');
+  assert.ok(overview.overview.sessions.length > 0, 'sessions present');
+  assert.ok(Array.isArray(overview.recent) && overview.recent.length > 0, 'recent events present');
+  assert.ok(Array.isArray(overview.pending.pendingResults));
+  assert.equal(overview.pending.gaps.length, 0, 'no invented gaps');
+  // no mutation
+  assert.equal(app.listEvents(SESSION_ID).length, beforeEvents);
+  assert.equal(app.listNodes().length, beforeNodes);
+  assert.equal(app.listMarked().length, beforeMarks);
+});
+
+test('return pending: action without correlated result -> positional labels, never loss', () => {
+  const app = freshApp();
+  // fresh fixture has tu:alpha and tu:beta matched, and SessionStart/Stop as session events.
+  // Add an action without PostToolUse.
+  app.ingest({
+    id: 'ev:open1',
+    session_id: SESSION_ID,
+    kind: 'action',
+    source_event: 'PreToolUse',
+    actor: 'coder',
+    observed_at: '2026-10-11T08:06:00.000Z',
+    tool_use_id: 'tu:open',
+    payload: { tool: 'Bash' },
+  });
+  // no SessionEnd/ended_at, and the Stop event is AFTER this action -> the fixture Stop is the last event before no session close.
+  // The action is before the Stop: fixture has Stop at 08:05, this action at 08:06 -> after the Stop.
+  const pending = app.getReturnOverview(SESSION_ID).pending;
+  const p = pending.pendingResults.find((r) => r.action.id === 'ev:open1');
+  assert.ok(p, 'pending action listed');
+  // The fixture Stop is at 08:05:00 and the new action at 08:06:00, so the Stop is NOT after it.
+  // No later closure signal besides the session Stop (which is before) and no ended_at -> "result not yet observed".
+  assert.equal(p.label, 'result not yet observed');
+  assert.equal(p.closureSignal, null);
+});
+
+test('return pending: Stop after an action -> result not observed at turn close; Stop-final -> no session closure', () => {
+  const app = freshApp();
+  // Build a dedicated session: action at t0, Stop at t1 (no SessionEnd/ended_at).
+  app.createTask({ id: 'task:t3', project_ref: 'p', title: 't3', status: 'open' });
+  app.createSession({ id: 'session:t3', task_ref: 'task:t3', source: 'hooks', started_at: '2026-10-11T09:00:00Z' });
+  app.ingest({ id: 'ev:t3a', session_id: 'session:t3', kind: 'action', source_event: 'PreToolUse', actor: 'coder', observed_at: '2026-10-11T09:00:10Z', tool_use_id: 'tu:t3a', payload: { tool: 'Bash' } });
+  app.ingest({ id: 'ev:t3s', session_id: 'session:t3', kind: 'session', source_event: 'Stop', actor: 'user', observed_at: '2026-10-11T09:00:20Z', payload: {}, status: 'captured' });
+  let ov = app.getReturnOverview('session:t3');
+  let p = ov.pending.pendingResults.find((r) => r.action.id === 'ev:t3a');
+  assert.equal(p.label, 'result not observed at turn close', 'Stop after the action closes the turn');
+  const session = ov.overview.sessions.find((s) => s.id === 'session:t3');
+  assert.equal(session.session_closure, 'no session closure', 'Stop does not close the session');
+  assert.equal(session.last_turn_finished, true, 'Stop as last observed event marks last turn finished');
+
+  // Stop followed by a new action without result -> the later action is "result not yet observed",
+  // and still no session closure (RC-09).
+  app.ingest({ id: 'ev:t3b', session_id: 'session:t3', kind: 'action', source_event: 'PreToolUse', actor: 'coder', observed_at: '2026-10-11T09:00:30Z', tool_use_id: 'tu:t3b', payload: { tool: 'Bash' } });
+  ov = app.getReturnOverview('session:t3');
+  const pa = ov.pending.pendingResults.find((r) => r.action.id === 'ev:t3a');
+  const pb = ov.pending.pendingResults.find((r) => r.action.id === 'ev:t3b');
+  assert.equal(pa.label, 'result not observed at turn close', 'action before Stop keeps its turn-close label');
+  assert.equal(pb.label, 'result not yet observed', 'closure before later work is never applied to later work');
+  const session2 = ov.overview.sessions.find((s) => s.id === 'session:t3');
+  assert.equal(session2.session_closure, 'no session closure');
+  assert.equal(session2.last_turn_finished, false, 'Stop is no longer the last event');
+});
+
+test('return pending: SessionEnd after an action without ended_at -> closed, result at session close (RC-07)', () => {
+  const app = freshApp();
+  app.createTask({ id: 'task:t4', project_ref: 'p', title: 't4', status: 'open' });
+  app.createSession({ id: 'session:t4', task_ref: 'task:t4', source: 'hooks', started_at: '2026-10-11T10:00:00Z' });
+  app.ingest({ id: 'ev:t4a', session_id: 'session:t4', kind: 'action', source_event: 'PreToolUse', actor: 'coder', observed_at: '2026-10-11T10:00:10Z', tool_use_id: 'tu:t4a', payload: { tool: 'Bash' } });
+  app.ingest({ id: 'ev:t4s', session_id: 'session:t4', kind: 'session', source_event: 'SessionEnd', actor: 'user', observed_at: '2026-10-11T10:00:20Z', payload: {}, status: 'captured' });
+  const ov = app.getReturnOverview('session:t4');
+  const p = ov.pending.pendingResults.find((r) => r.action.id === 'ev:t4a');
+  assert.equal(p.label, 'result not observed at session close');
+  const session = ov.overview.sessions.find((s) => s.id === 'session:t4');
+  assert.equal(session.session_closure, 'closed', 'SessionEnd closes the session');
+});
+
+test('return pending: nearest closure signal wins — ended_at closer than a later Stop (P2-2)', () => {
+  const app = freshApp();
+  app.createTask({ id: 'task:t5', project_ref: 'p', title: 't5', status: 'open' });
+  app.createSession({ id: 'session:t5', task_ref: 'task:t5', source: 'hooks', started_at: '2026-10-11T11:00:00Z', ended_at: '2026-10-11T11:00:30Z' });
+  // action at t+10s, ended_at at t+30s, Stop event at t+40s (after ended_at)
+  app.ingest({ id: 'ev:t5a', session_id: 'session:t5', kind: 'action', source_event: 'PreToolUse', actor: 'coder', observed_at: '2026-10-11T11:00:10Z', tool_use_id: 'tu:t5a', payload: { tool: 'Bash' } });
+  app.ingest({ id: 'ev:t5s', session_id: 'session:t5', kind: 'session', source_event: 'Stop', actor: 'user', observed_at: '2026-10-11T11:00:40Z', payload: {}, status: 'captured' });
+  const ov = app.getReturnOverview('session:t5');
+  const p = ov.pending.pendingResults.find((r) => r.action.id === 'ev:t5a');
+  assert.equal(p.label, 'result not observed at session close', 'ended_at (closer) beats the later turn Stop');
+  assert.equal(p.closureSignal.source_event, 'ended_at');
+});
+
+test('return pending: chronological comparison with mixed ISO precision (P2-2 regression)', () => {
+  const app = freshApp();
+  app.createTask({ id: 'task:t6', project_ref: 'p', title: 't6', status: 'open' });
+  app.createSession({ id: 'session:t6', task_ref: 'task:t6', source: 'hooks', started_at: '2026-10-11T12:00:00Z', ended_at: '2026-10-11T12:00:30Z' });
+  // action at 12:00:10; ended_at 12:00:30 (no millis); Stop at 12:00:30.500
+  // Chronologically ended_at wins; a lexicographic compare would pick the Stop.
+  app.ingest({ id: 'ev:t6a', session_id: 'session:t6', kind: 'action', source_event: 'PreToolUse', actor: 'coder', observed_at: '2026-10-11T12:00:10Z', tool_use_id: 'tu:t6a', payload: { tool: 'Bash' } });
+  app.ingest({ id: 'ev:t6s', session_id: 'session:t6', kind: 'session', source_event: 'Stop', actor: 'user', observed_at: '2026-10-11T12:00:30.500Z', payload: {}, status: 'captured' });
+  const ov = app.getReturnOverview('session:t6');
+  const p = ov.pending.pendingResults.find((r) => r.action.id === 'ev:t6a');
+  assert.equal(p.label, 'result not observed at session close', 'normalized time: ended_at 12:00:30 < Stop 12:00:30.500');
+  assert.equal(p.closureSignal.source_event, 'ended_at');
+});
+
+test('return review proposals: derived from node_versions; single-version node has no proposal (RC-03/04)', () => {
+  const app = freshApp();
+  const event = app.listEvents(SESSION_ID)[0];
+  // single version -> no proposal, regardless of the project revision
+  app.saveNode({ id: 'node:single', kind: 'concept', title: 'Single', project_revision: 'rev:1', sources: [event.id] });
+  assert.equal(app.getReturnOverview(SESSION_ID).reviewProposals.length, 0, 'no proposal for a single-version node');
+
+  // consecutive versions with a change -> proposal, previous preserved
+  app.saveNode({ id: 'node:single', kind: 'concept', title: 'Single', project_revision: 'rev:1', sources: [event.id] });
+  const second = app.saveNode({ id: 'node:single', kind: 'concept', title: 'Single v2', project_revision: 'rev:2', sources: [event.id] });
+  const proposals = app.getReturnOverview(SESSION_ID).reviewProposals;
+  assert.equal(proposals.length, 1);
+  assert.equal(proposals[0].node_id, 'node:single');
+  assert.equal(proposals[0].previous.project_revision, 'rev:1');
+  assert.equal(proposals[0].project_revision, 'rev:2');
+  const prev = app.getNodeVersion(second.node.previous_version_id);
+  assert.ok(prev, 'previous version preserved');
+  assert.equal(prev.title, 'Single');
+
+  // resave at the current revision retires the proposal
+  app.saveNode({ id: 'node:single', kind: 'concept', title: 'Single v3', project_revision: 'rev:2', sources: [event.id] });
+  assert.equal(app.getReturnOverview(SESSION_ID).reviewProposals.length, 0, 'proposal retired when saved at the current revision');
 });
