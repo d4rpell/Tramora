@@ -1,12 +1,12 @@
 # Tramora
 
-**Status: product concept.** Working document last updated on 10 October 2026. Two concept prototypes with fictional data were built internally and are not part of this repository: they do not connect to agents, do not run tasks and do not yet prove the product's usefulness.
-
 > Follow what your agents build. Understand their decisions. Keep what you learn.
 
 Tramora is a proposed visual application for people who build software with AI agents. It brings together the observable work of the agents, the explanations a person needs to direct them, and a persistent map of what they have explored. Its purpose is to let you come back days later to a question, a decision or a change and recover its context without rereading several conversations.
 
 The name **Tramora** was chosen by the owner. The concept documentation is versioned in [the Tramora repository](https://github.com/d4rpell/Tramora). Domain and trademark availability have not been checked.
+
+**Status: product concept.** Working document last updated on 10 October 2026. This documentation is versioned and published in this repository (first commit on 9 October 2026). Two concept prototypes with fictional data were built internally and stay out of the repository: they do not connect to agents, do not run tasks and do not yet prove the product's usefulness.
 
 ## Why it exists
 

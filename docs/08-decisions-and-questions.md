@@ -58,3 +58,10 @@ Record the chosen option, alternatives, reason, evidence, limits and review cond
 **Alternatives:** only remove the project name, or write an exhaustive specification before resolving host capabilities. The chosen approach details upcoming tasks and keeps later choices explicit.
 **Limits:** this changes the validation case and planning structure, not the plugin-first direction, truthfulness/privacy rules or technical success criteria. It does not approve the light scope, choose a host/provider/storage/pricing, authorize another project's real data, or authorize publication/live payments. Technical feasibility, user value and commercial readiness are separate outcomes.
 **Review condition:** if the selected host lacks useful visual presence or sufficient authorized events, apply D-001's existing review condition. Revisit the value hypothesis based on measured use, without assigning a new external project by default.
+
+## D-006 — Reviewer effort per model (2026-10-10)
+
+**Decision (owner):** reviewer reasoning effort is set **per model**, not fixed: the contract/independent reviewer model runs at **medium by default**, the mechanical/documented reviewer model at **high by default**, and the higher level for the contract reviewer is a **deterministic escalation only** — the reviewer must show explicitly that a claim cannot be resolved at the default level, and the raised level requires a new session. It is never raised by default, out of caution, or "to be safe".
+**Reason:** spend less without lowering the model of any gate; effort is reasoning budget, not the gate's model (`apto` = 0 P0/P1). This closes a discrepancy between the review command and the working policy.
+**Limits:** does not change any gate's model, the closure criterion, or the round limits. The session's own model routing remains an owner configuration decision.
+**Review condition:** if the review provider changes its effort vocabulary or a valid escalation cannot be served.
