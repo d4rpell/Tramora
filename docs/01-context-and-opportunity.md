@@ -21,11 +21,13 @@ A session with agents may contain tasks, discussions, code changes and results, 
 
 An explanation detached from its source can sound convincing and be wrong. A flashy interface that only shows statuses does not solve the problem either. Tramora's hypothesis lies in connecting **observed work → question → explanation with source → human decision → verifiable result → retrievable memory**.
 
-## Users and potential buyer
+## Users
 
 The first user would be the owner while developing his projects. Other possible users are developers, technical leads, security professionals and product managers who direct work in areas outside their specialty. This does not assume they know little about programming: an expert may need clarification about a new domain or a methodology introduced by an agent.
 
-For a technology company, a purchase hypothesis would be reducing the time a manager needs to reconstruct the decisions of delegated work and improving the quality of the clarifications they send back to the agents. Engineering or platform leads would be plausible counterparts. It has not been validated who would pay, how much, or how often the problem occurs.
+Tramora is **not a commercial product and will not be sold** ([D-008](08-decisions-and-questions.md#d-008--open-publication-under-apache-20-no-commercial-track-2026-10-11)); it is published as an open-source project. An earlier working hypothesis about a buyer and the value for a technology company (reducing the time a manager needs to reconstruct delegated decisions) is kept below only as **context for the problem**, not as a business commitment or a claim about who would pay.
+
+*Historical hypothesis (not a current commitment):* for a technology company, the value would be reducing the time a manager needs to reconstruct the decisions of delegated work and improving the quality of the clarifications they send back to the agents. Engineering or platform leads would be plausible interpreters of that value. Who would pay, how much, or how often the problem occurs was never validated.
 
 ## Prudent positioning
 

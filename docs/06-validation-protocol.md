@@ -1,6 +1,6 @@
 # Validation protocol
 
-Updated: 2026-10-10. [D-005](08-decisions-and-questions.md#d-005--validation-independent-of-burneum-2026-10-10) supersedes the initial Burneum proposal: the owner will not continue it. This protocol requires no other active project. Technical validation and a later value pilot have different purposes and evidence.
+Updated: 2026-10-11. [D-005](08-decisions-and-questions.md#d-005--validation-independent-of-burneum-2026-10-10) supersedes the initial Burneum proposal: the owner will not continue it. This protocol requires no other active project. Technical validation and a later value pilot have different purposes and evidence.
 
 ## Technical validation before the value pilot
 
@@ -37,6 +37,6 @@ Prepare two comparable runs, one with the usual workflow and another with Tramor
 
 Record actual results, sample limits and negative findings. If people understand just as quickly with the usual workflow or do not return to the map, revise the product before broadening integrations. Do not claim time savings or other benefits before measurement. A controlled exercise does not establish value across customer projects.
 
-## Commercial readiness and launch
+## Open publication (no commercial track)
 
-Technical validation and value evidence do not make a commercial product complete. Prepare access, test-mode purchase, verified webhooks, delivery/installation, operational email, private deployment, recovery, privacy/texts and support; validate the complete user flow privately. Record implementation status, private evidence and remaining activation steps separately. Public DNS, real charges and public opening require the owner's express launch authorization and confirmation of the applicable administrative preparations.
+Technical validation and value evidence do not make a commercial product, and Tramora is not one: it is **not sold** and is published as an open-source repository under **Apache-2.0** ([D-008](08-decisions-and-questions.md#d-008--open-publication-under-apache-20-no-commercial-track-2026-10-11)). The earlier plan for a commercial launch (access, test-mode purchase, verified webhooks, delivery/installation, operational email, customer texts, support) is **retired** and is not a requirement. What remains is ordinary open-source hygiene: the `LICENSE` file and a README stating the status and limits; publishing the repository, changing visibility or cutting a release requires the owner's explicit authorization. The truthfulness, privacy and authorized-capture rules are unchanged, and nothing here authorizes capture of real data (T0-04b).

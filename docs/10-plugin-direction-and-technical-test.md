@@ -29,7 +29,7 @@ Durable storage of the map must be independent of the lifetime of the visual com
 
 ## First technical test with a controlled task
 
-Amendment on 2026-10-10: [D-005](08-decisions-and-questions.md#d-005--validation-independent-of-burneum-2026-10-10) withdraws the originally proposed Burneum case. The plugin-first decision and success criteria remain in force. The light scope and concrete host/source still require selection; backlog restructuring is not implementation approval.
+Amendment on 2026-10-10: [D-005](08-decisions-and-questions.md#d-005--validation-independent-of-burneum-2026-10-10) withdraws the originally proposed Burneum case. The plugin-first decision and success criteria remain in force. Amendment on 2026-10-11: the light scope, host and source were **decided** by the owner in [D-007](08-decisions-and-questions.md#d-007--light-scope-host-and-event-source-2026-10-11) (Codex in the ChatGPT desktop app; lifecycle hooks; local web connector as fallback), still as candidates to verify in T1. Backlog restructuring is not implementation approval. Tramora is **not commercial** and is published open-source under Apache-2.0 ([D-008](08-decisions-and-questions.md#d-008--open-publication-under-apache-20-no-commercial-track-2026-10-11)).
 
 1. Prepare a small controlled task in a test workspace; identify the chosen host, version, source and expected action/result. Obtain explicit authorization for the session, capture, inclusion/redaction, remote processing if any, and retention before collecting data. No external active project is required.
 2. Show the component inside a compatible surface and check its behavior while work continues and when closing/reopening.

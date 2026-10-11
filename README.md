@@ -6,8 +6,6 @@ Tramora is a proposed visual application for people who build software with AI a
 
 The name **Tramora** was chosen by the owner. The concept documentation is versioned in [the Tramora repository](https://github.com/d4rpell/Tramora). Domain and trademark availability have not been checked.
 
-**Status: product concept.** Working document last updated on 10 October 2026. This documentation is versioned and published in this repository (first commit on 9 October 2026). Two concept prototypes with fictional data were built internally and stay out of the repository: they do not connect to agents, do not run tasks and do not yet prove the product's usefulness.
-
 ## Why it exists
 
 While working on Ariadne with AI, the owner noticed that agents used technical vocabulary and methods that they often explained as if talking to each other. To understand a decision they had to open another chat, ask, and then rebuild the working context. They wanted a more transparent, lighter experience. Later they added two requirements of their own: seeing visually how agents communicate, and keeping a map of questions and explanations to return to. Burneum was initially suggested as a test case; the owner withdrew it on 10 October 2026 because that project will not be continued. Tramora no longer depends on it.
@@ -24,7 +22,7 @@ The colourful avatars and the activity panel take as visual reference the first 
 
 ## What is in this repository
 
-- [`docs/01-context-and-opportunity.md`](docs/01-context-and-opportunity.md): origin, initial user, potential buyer and value proposition.
+- [`docs/01-context-and-opportunity.md`](docs/01-context-and-opportunity.md): origin, initial user and value proposition.
 - [`docs/02-experience.md`](docs/02-experience.md): screens, interactions, questions, map and decisions.
 - [`docs/03-data-and-truthfulness.md`](docs/03-data-and-truthfulness.md): event model, provenance and rules for never inventing communications.
 - [`docs/04-architecture-and-integrations.md`](docs/04-architecture-and-integrations.md): plugin, reusable web interface, event capture and evolution towards SaaS.
@@ -39,11 +37,15 @@ The colourful avatars and the activity panel take as visual reference the first 
 
 The first useful version would focus on a work session from a single environment, messages and actions that are actually available, explanations with sources, suggested questions and a map that survives the end of the session. Next would come sending clarifications back to the worker and checking its answer. The team view and other connectors would come after value is verified in individual use.
 
-**Direction accepted on 2026-09-29: plugin first**, with a reusable web interface and its own storage for the map. The next step is to test visual presence, real activity and learning recovery in an identified environment using an authorized controlled task. A later value pilot will select its own case; no external project is required ([D-005](docs/08-decisions-and-questions.md#d-005--validation-independent-of-burneum-2026-10-10)). The integration is not implemented yet. [Decision D-001 and test criteria](docs/10-plugin-direction-and-technical-test.md).
+**Direction accepted on 2026-09-29: plugin first**, with a reusable web interface and its own storage for the map. The light scope, host and source were decided on 2026-10-11 ([D-007](docs/08-decisions-and-questions.md#d-007--light-scope-host-and-event-source-2026-10-11)): Codex in the ChatGPT desktop app with lifecycle hooks as the event source, and a local web with a read-only connector as a fallback for users without Codex. The next step is to test visual presence, real activity and learning recovery in that environment using an authorized controlled task. A later value pilot will select its own case; no external project is required ([D-005](docs/08-decisions-and-questions.md#d-005--validation-independent-of-burneum-2026-10-10)). The integration is not implemented yet. [Decision D-001 and test criteria](docs/10-plugin-direction-and-technical-test.md).
 
 ## Success criterion
 
 Tramora must help direct work better. The pilot would observe whether the owner opens fewer side chats, understands a decision before answering, finds the message behind an explanation, and can pick up a question days later without rebuilding the whole conversation. These benefits have not been measured yet.
+
+## Status
+
+**Product concept, open source.** Working document last updated on 11 October 2026. This documentation is versioned and published in this repository (first commit on 9 October 2026). Two concept prototypes with fictional data were built internally and stay out of the repository: they do not connect to agents, do not run tasks and do not yet prove the product's usefulness. Tramora is **not a commercial product and will not be sold**; it is published as an open-source project under the **Apache-2.0** license ([D-008](docs/08-decisions-and-questions.md#d-008--open-publication-under-apache-20-no-commercial-track-2026-10-11)).
 
 ## References and inspiration
 
