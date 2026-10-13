@@ -375,8 +375,19 @@ function renderProposalRows(proposals) {
 }
 
 async function refreshReturn() {
-  const data = await api('/api/return-overview');
-  renderReturn(data);
+  try {
+    const data = await api('/api/return-overview');
+    renderReturn(data);
+  } catch (err) {
+    const container = document.getElementById('return-overview');
+    const list = container && container.querySelector('.return-rows');
+    if (list) {
+      const notice = el('p', 'return-empty', `return view unavailable: ${err.message}`);
+      const existing = list.querySelector('.return-empty');
+      if (existing) existing.replaceWith(notice);
+      else list.append(notice);
+    }
+  }
 }
 
 function bindTabs() {
@@ -389,6 +400,9 @@ function bindTabs() {
       const target = btn.dataset.tab;
       document.querySelectorAll('.view').forEach((v) => (v.hidden = true));
       document.getElementById(`tab-${target}-view`).hidden = false;
+      // Refresh the Return view every time it is opened (consultation-only).
+      // Marks or versions saved after the initial load would otherwise stay stale.
+      if (target === 'return') refreshReturn();
     });
   });
 }
