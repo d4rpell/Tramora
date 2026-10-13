@@ -21,7 +21,7 @@ Requires **Node.js 22.5+** (uses the built-in `node:sqlite`; tested on Node 24).
 ```bash
 cd app
 npm install
-npm test          # 53 tests: unit (contracts, store, adapter, operations) + Playwright a11y/cross-site e2e
+npm test          # 63 tests: unit (contracts, store, adapter, operations) + Playwright a11y/cross-site e2e
 npm run lint      # node --check on every source file
 npm start         # serves the web surface on http://127.0.0.1:4210
 ```
