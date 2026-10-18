@@ -1,6 +1,6 @@
 # Decisions, hypotheses and open questions
 
-Started: 2026-09-29. Updated: 2026-10-11. This log keeps proposals made during ideation from being mistaken for confirmed decisions.
+Started: 2026-09-29. Updated: 2026-10-16. This log keeps proposals made during ideation from being mistaken for confirmed decisions.
 
 ## Confirmed by the owner
 
@@ -92,3 +92,22 @@ Record the chosen option, alternatives, reason, evidence, limits and review cond
 **Reason:** it is the cheap implementation route the owner uses and does not spend Codex quota or zrelay on mechanical work.
 **Limits:** it is a session-configuration choice; it does not change any gate's model or the closure criterion. The exact provider identifiers are the owner's configuration and are not verified from this session.
 **Review condition:** if the owner changes model/provider or the routing policy changes.
+
+## D-010 — Value-pilot conclusions registered (2026-10-16)
+
+**Decision (owner instruction 2026-10-16):** the outstanding conclusion of the value pilot (T2-00b) is registered in this log. The owner instructed the pending work to be completed, which unblocks carrying the private value report's conclusions into the decision log. Provenance is explicit: this entry records the pilot result as observed evidence, keeps already-implemented behaviour as the position, and leaves product expansions as proposals.
+
+**Observed (n=1, one authorized single participant, no statistical value):** one real activity run captured through lifecycle hooks, with a node saved and marked, and a return to it after more than three days (a real interval, not simulated). The node, its explanation and its observed source were recovered on the local surface, and the recovered claims matched the observed event (session, event type, command, result, timestamp).
+
+**Registered as the project's position:**
+- Return stays consultation-only, keeping the separation between observed event, generated explanation, source and mark visible. *(Already the implemented state, see T1-03.)*
+- The node, explanation and mark stay persisted locally for the light walkthrough. *(Already the implemented state.)*
+- Hook coverage is an explicit limit: a run without capture stays a gap and is never filled by inference. *(Already a project invariant.)*
+
+**Kept open as proposals, not decisions:**
+- Investigate or fix the measured recovery friction (the search took minutes and required an extra interaction to open the node evidence) and the repetitive detail of the generated explanation. The Return "marked for review" render mismatch observed during the pilot is recorded as a backlog item.
+- No productivity, comprehension, satisfaction or time-saving benefit is claimed from a single run.
+- Broadening the surface or the capture requires a new owner decision; nothing here authorizes real-data capture beyond the existing T0-04b sheet.
+
+**Limits:** this records a one-sample outcome and restates invariants already in force. It is not statistical evidence, does not turn the pilot into commercial validation ([D-008](#d-008--open-publication-under-apache-20-no-commercial-track-2026-10-11)), does not authorize publication, and does not close any wider product decision.
+**Review condition:** if a later run with more participants contradicts these positions, or if the owner decides to broaden the surface or the capture.

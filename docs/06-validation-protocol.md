@@ -37,6 +37,10 @@ Prepare two comparable runs, one with the usual workflow and another with Tramor
 
 Record actual results, sample limits and negative findings. If people understand just as quickly with the usual workflow or do not return to the map, revise the product before broadening integrations. Do not claim time savings or other benefits before measurement. A controlled exercise does not establish value across customer projects.
 
+## Value-pilot outcome (n=1)
+
+The pilot was run once with a single authorized participant, using a controlled comparable exercise. One real activity run was captured through lifecycle hooks, a node was saved and marked, and the node, its explanation and its observed source were recovered on the local surface after a real interval of more than three days. The measures and limits are recorded privately, and the conclusions are registered as [D-010](08-decisions-and-questions.md#d-010--value-pilot-conclusions-registered-2026-10-16). This is a one-sample outcome with no statistical value: it does not establish memory, comprehension, satisfaction, productivity or time savings, and no such benefit is asserted. A gap declared as such (for example, a run without capture) stays a gap and is never filled by inference.
+
 ## Open publication (no commercial track)
 
 Technical validation and value evidence do not make a commercial product, and Tramora is not one: it is **not sold** and is published as an open-source repository under **Apache-2.0** ([D-008](08-decisions-and-questions.md#d-008--open-publication-under-apache-20-no-commercial-track-2026-10-11)). The earlier plan for a commercial launch (access, test-mode purchase, verified webhooks, delivery/installation, operational email, customer texts, support) is **retired** and is not a requirement. What remains is ordinary open-source hygiene: the `LICENSE` file and a README stating the status and limits; publishing the repository, changing visibility or cutting a release requires the owner's explicit authorization. The truthfulness, privacy and authorized-capture rules are unchanged, and nothing here authorizes capture of real data (T0-04b).

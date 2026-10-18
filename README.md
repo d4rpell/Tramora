@@ -23,11 +23,12 @@ Two capabilities of the proposed experience are **not implemented yet**:
 
 ## Status
 
-**Product concept, open source, with a runnable light walkthrough.** Working document last updated on 13 October 2026. The concept is documented and versioned in this repository; the first commit is from 9 October 2026.
+**Product concept, open source, with a runnable light walkthrough.** Working document last updated on 16 October 2026. The concept is documented and versioned in this repository; the first commit is from 9 October 2026.
 
 - **Implemented and tested:** the light walkthrough in [`app/`](app/README.md) — local web surface (Node + built-in SQLite), read-only lifecycle-hooks connector, observed-only rendering, local rules explanation with navigable sources, persistent nodes and review marks. 63 tests pass (unit + Playwright accessibility/UI at 320 px, keyboard and `prefers-reduced-motion`).
 - **Tested with real activity:** a controlled case (`average` raising `ValueError`) was executed with a real Codex session and captured through lifecycle hooks (see [`docs/10`](docs/10-plugin-direction-and-technical-test.md) and the value-pilot protocol in `docs/06`).
-- **Not yet:** in-host panel next to the work in the ChatGPT desktop app (not accredited); a measured value pilot with real recovery after days (in progress); any claimed benefit — none is asserted without evidence ([D-008](docs/08-decisions-and-questions.md#d-008--open-publication-under-apache-20-no-commercial-track-2026-10-11), [docs/06](docs/06-validation-protocol.md)).
+- **Value pilot run once (n=1, single participant):** a real activity run, a saved and marked node, and a return to it after more than three days were measured on the local surface. The single-sample result is not a statistical claim and no productivity benefit is asserted; the measured limits are recorded ([docs/06](docs/06-validation-protocol.md)).
+- **Not yet:** in-host panel next to the work in the ChatGPT desktop app (not accredited); any claimed benefit — none is asserted without evidence ([D-008](docs/08-decisions-and-questions.md#d-008--open-publication-under-apache-20-no-commercial-track-2026-10-11), [docs/06](docs/06-validation-protocol.md)).
 
 ## Running it
 
@@ -72,7 +73,7 @@ The server listens on `127.0.0.1:4210` by default (`TRAMORA_PORT` overrides) and
 
 **Direction accepted on 2026-09-29: plugin first**, with a reusable web interface and its own storage for the map ([D-001](docs/10-plugin-direction-and-technical-test.md)). The light scope, host and source were decided on 2026-10-11 ([D-007](docs/08-decisions-and-questions.md#d-007--light-scope-host-and-event-source-2026-10-11)): Codex in the ChatGPT desktop app with lifecycle hooks as the event source, and a local web with a read-only connector as a fallback for users without Codex. The value pilot selects its own case; no external project is required ([D-005](docs/08-decisions-and-questions.md#d-005--validation-independent-of-burneum-2026-10-10)).
 
-The success criterion: Tramora must help direct work better. The pilot observes whether the person opens fewer side chats, understands a decision before answering, finds the message behind an explanation, and can pick up a question days later without rebuilding the whole conversation. **These benefits have not been measured yet.**
+The success criterion: Tramora must help direct work better. The pilot observes whether the person opens fewer side chats, understands a decision before answering, finds the message behind an explanation, and can pick up a question days later without rebuilding the whole conversation. One single-participant run (n=1) measured a real capture, a saved and marked node, and a return to it after more than three days; it carries no statistical value and **no benefit is asserted from it.**
 
 ## References and inspiration
 
