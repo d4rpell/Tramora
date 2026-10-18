@@ -30,6 +30,23 @@ If Playwright's chromium is missing: `npx playwright install chromium`.
 
 The server listens on `127.0.0.1:4210` by default (`TRAMORA_PORT` overrides). It writes `tramora.db` in the working directory (`TRAMORA_DB` overrides); the file is git-ignored.
 
+## Capturing a real session
+
+`npm start` serves a declared fixture. To serve events captured from a real, authorized Codex session:
+
+1. Copy [`hooks/tramora-hook.js`](hooks/tramora-hook.js) into `<project>/.codex/hooks/` and point `<project>/.codex/hooks.json` at it. The hook writes nothing unless `TRAMORA_HOOK_LOG` is set.
+2. Run the session with that variable set (Codex runs the project hooks only for trusted projects; an untrusted project's hooks are skipped silently).
+3. Serve the capture:
+
+```bash
+TRAMORA_HOOKS_LOG="/path/to/hooks.jsonl" \
+TRAMORA_DB="/path/to/tramora.db" \
+TRAMORA_PROJECT="my-project" \
+npm run connect            # http://127.0.0.1:4212
+```
+
+`src/connector.js` reads the JSONL on every request (live, no restart), ingests idempotently, binds to `127.0.0.1` only, and relabels the served page as an **observed session**: labelling real activity as a fixture would break the same truthfulness rule as presenting fiction as real.
+
 ## What is implemented (T1-01a–h)
 
 - **T1-01a — Base and storage:** `src/core/store.js` (SQLite) + `src/core/operations.js`; persistence survives close/reopen; two tasks never mix records; write errors are visible.
